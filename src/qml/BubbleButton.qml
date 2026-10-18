@@ -3,13 +3,11 @@ import QtQuick
 
 Rectangle {
     id: box
-    width: customWidth > 0 ? customWidth : textItem.implicitWidth + horizontalPadding * 2
+    width: buttonWidth > textItem.implicitWidth + horizontalPadding * 2 ? buttonWidth : textItem.implicitWidth + horizontalPadding * 2
     height: buttonHeight
     radius: buttonRadius
-    antialiasing: true
-    color: mouseArea.containsMouse ? secondaryColor : primaryColor
-    border.width: borderWidth
-    border.color: "black"
+    antialiasing: false
+    color: mouseArea.containsMouse ? primaryColor : "transparent " // mouseArea.containsMouse ? secondaryColor : primaryColor
 
     property string text: ""
     property string fontFamily: "Soegoe UI"
@@ -18,15 +16,16 @@ Rectangle {
 
     property int buttonWidth: 20
     property int buttonHeight: 20
-    property int buttonRadius: 8
     property int borderWidth: 2
+    property int buttonRadius: 8
 
     property int horizontalPadding: 8
-    property real customWidth: 0
 
     property color primaryColor: "#495149"
     property color secondaryColor: "#313831"
-    property color textColor: "#D4D4D4"
+    property color textColor: "#C4CCC3"
+
+    property alias mouseArea: mArea
 
     Text {
         id: textItem
@@ -41,11 +40,11 @@ Rectangle {
         font.pixelSize: box.fontSize
         font.bold: box.bold
         font.family: box.fontFamily
-        font.weight: Font.Thin
+        font.weight: Font.Bold
     }
 
     MouseArea {
-        id: mouseArea
+        id: mArea
         anchors.fill: parent
         hoverEnabled: true
     }

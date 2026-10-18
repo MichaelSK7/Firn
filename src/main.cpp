@@ -1,21 +1,18 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
 
-int main(int argc, char *argv[])
-{
+#include "src/cpp/userData.hpp"
+
+int main(int argc, char* argv[]) {
     QGuiApplication app(argc, argv);
 
+    foo testClass;
+
     QQmlApplicationEngine engine;
-    QObject::connect(
-        &engine,
-        &QQmlApplicationEngine::objectCreationFailed,
-        &app,
-        []()
-        { QCoreApplication::exit(-1); },
-        Qt::QueuedConnection);
-    QObject::connect(&engine, &QQmlApplicationEngine::quit, &app, &QCoreApplication::quit, Qt::QueuedConnection);
+    engine.rootContext()->setContextProperty("classA", &testClass);
 
-    engine.loadFromModule("Firn2", "Main");
+    engine.loadFromModule("Firn", "Main");
 
-    return QGuiApplication::exec();
+    return app.exec();
 }

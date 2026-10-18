@@ -2,13 +2,22 @@ pragma ComponentBehavior: Bound
 import QtQuick
 
 Rectangle {
-    id: bubbleButton
-    color: defaultColor
+    id: box
+    width: rectWidth
+    height: rectHeight
+    radius: rectRadius
+    antialiasing: false
+    color: "#313831"
 
-    property int buttonWidth: 20
-    property int buttonHeight: 20
-    property int buttonRadius: 10
+    property string text: ""
+    property string fontFamily: "Soegoe UI"
+    property int fontSize: 14
+    property bool bold: false
 
-    property color defaultColor: "#660099"
-    property color hoverColor: "#d1b2e0"
+    property int rectWidth: 20
+    property int rectHeight: 20
+    property int rectRadius: 8
+    property int borderWidth: 2
+
+    property int horizontalPadding: 8
 }

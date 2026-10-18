@@ -1,74 +1,64 @@
-cmake_minimum_required(VERSION 3.16)
 
-project(Firn2 VERSION 0.1 LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.21)
 
+project(appFirn VERSION 0.1 LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick)
+find_package(Qt6 6.10 REQUIRED COMPONENTS Quick)
 
 qt_standard_project_setup(REQUIRES 6.10)
 
-# Content of downloaded design from Figma to Qt or similar
-if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/importedcontent/CMakeLists.txt")
-    add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/importedcontent)
+# Optional imported content
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/importedcontent/CMakeLists.txt")
+    add_subdirectory(importedcontent)
 endif()
 
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.qml"
-)
-
-# --- Windows Executable Icon Configuration ---
+# Windows executable icon
 set(WINDOWS_RESOURCES)
-if(WIN32)
-    set(WINDOWS_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/res/windows/resources.rc")
+if(WIN32 AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/res/windows/resources.rc")
+    set(WINDOWS_RESOURCES res/windows/resources.rc)
 endif()
 
-qt_add_executable(appFirn2 ${SOURCES})
-
-# Append the windows resource file if it exists
-if(WIN32)
-    target_sources(appFirn2 PRIVATE ${WINDOWS_RESOURCES})
-endif()
-
-
-file(GLOB_RECURSE QML_FILES CONFIGURE_DEPENDS
-    RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/*.qml"
-    "${CMAKE_CURRENT_SOURCE_DIR}/qml/*.qml"
+# Main executable
+qt_add_executable(Firn
+    src/main.cpp
+    ${WINDOWS_RESOURCES}
 )
 
-set(QML_SOURCES)
-
-foreach(file IN LISTS QML_FILES)
-    set_source_files_properties("${file}"
-        PROPERTIES QT_RESOURCE_ALIAS "${file}"
-    )
-    list(APPEND QML_SOURCES "${file}")
-endforeach()
-
-qt_add_qml_module(appFirn2
-    URI Firn2
-    QML_FILES ${QML_SOURCES}
+# QML module
+qt_add_qml_module(Firn
+    URI Firn
+    VERSION 1.0
+    QML_FILES
+        src/Main.qml
+        src/qml/BubbleButton.qml
+        src/qml/BubbleRect.qml
+        src/qml/Cross.qml
+        src/qml/HTextBoxGroup.qml
+        src/qml/VTextBoxGroup.qml
 )
 
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
-set_target_properties(appFirn2 PROPERTIES
-#    MACOSX_BUNDLE_GUI_IDENTIFIER com.example.appFirn2
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+# C++ subfolder
+add_subdirectory(src/cpp)
+
+target_link_libraries(Firn PRIVATE
+    Qt6::Quick
+    FirnCpp
+)
+
+set_target_properties(Firn PROPERTIES
     MACOSX_BUNDLE TRUE
-    WIN32_EXECUTABLE TRUE
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING
+        ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    WIN32_EXECUTABLE FALSE
 )
 
-target_link_libraries(appFirn2
-    PRIVATE Qt6::Quick
-)
+include(GNUInstallDirs)
 
-install(TARGETS appFirn2
+install(TARGETS Firn
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
