@@ -33,11 +33,13 @@ qt_add_qml_module(Firn
     VERSION 1.0
     QML_FILES
         src/Main.qml
-        src/qml/BubbleButton.qml
-        src/qml/BubbleRect.qml
-        src/qml/Cross.qml
-        src/qml/HTextBoxGroup.qml
-        src/qml/VTextBoxGroup.qml
+        src/qml/generic/BubbleButton.qml
+        src/qml/generic/BubbleRect.qml
+        src/qml/generic/Cross.qml
+        src/qml/generic/HTextBoxGroup.qml
+        src/qml/generic/VTextBoxGroup.qml
+    RESOURCES
+        res/assets/Firn_appIcon.png
 )
 
 # C++ subfolder

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic
-import "qml"
+import QtQuick.Dialogs
+import "qml/generic"
 
 ApplicationWindow {
     id: window
@@ -41,69 +42,91 @@ ApplicationWindow {
         clip: true
         border.width: window.generalBorderWidth
         border.color: "black"
+        MouseArea {
+            id: globalMouseArea
+            anchors.fill: parent
+            onClicked: {
+                filePopup.visible = false;
+            }
+        }
 
         Item {
             id: titleBar
             height: 30
+            z: 100
             width: titleBarButtons.implicitWidth
             antialiasing: true
             anchors {
                 top: screen.top
                 left: screen.left
                 right: screen.right
-                leftMargin: 5
+                leftMargin: 4
                 rightMargin: 5
+            }
+
+            Rectangle {
+                id: appIcon
+                width: 16
+                //border.width: 1
+                //border.color: "Black"
+                color: "transparent"
+
+                anchors {
+                    left: titleBar.left
+                    top: titleBar.top
+                    bottom: titleBar.bottom
+                    leftMargin: 6
+                }
+
+                Image {
+                    source: "qrc:/qt/qml/Firn/res/assets/Firn_appIcon.png"
+                    width: 16
+                    height: 16
+                    anchors.centerIn: parent
+                }
             }
 
             Row {
                 id: titleBarButtons
                 anchors {
-                    left: titleBar.left
-
+                    left: appIcon.right
                     verticalCenter: parent.verticalCenter
                 }
 
                 BubbleButton {
-                    id: fileButton1
+                    id: fileButton
                     text: "File"
-                    fontFamily: window.generalFontFamily
-                    fontSize: window.generalFontSize
-                    buttonRadius: window.generalRadius
+                    mouseArea.onClicked: filePopup.visible = !filePopup.visible
+                    VTextBoxGroup {
+                        id: filePopup
+                        z: 1
+                        anchors {
+                            left: fileButton.left
+                            top: fileButton.bottom
+                        }
+                        visible: false
+                        texts: ["New file", "Open file", "Open folder"]
+                    }
                 }
                 BubbleButton {
-                    id: fileButton2
+                    id: editButton
                     text: "Edit"
-                    fontFamily: window.generalFontFamily
-                    fontSize: window.generalFontSize
-                    buttonRadius: window.generalRadius
                 }
                 BubbleButton {
-                    id: fileButton3
+                    id: viewButton
                     text: "View"
-                    fontFamily: window.generalFontFamily
-                    fontSize: window.generalFontSize
-                    buttonRadius: window.generalRadius
                 }
                 BubbleButton {
-                    id: fileButton4
+                    id: goButton
                     text: "Go"
-                    fontFamily: window.generalFontFamily
-                    fontSize: window.generalFontSize
-                    buttonRadius: window.generalRadius
                 }
                 BubbleButton {
-                    id: fileButton5
+                    id: runButton
                     text: "Run"
-                    fontFamily: window.generalFontFamily
-                    fontSize: window.generalFontSize
-                    buttonRadius: window.generalRadius
                 }
                 BubbleButton {
-                    id: fileButton6
+                    id: terminalButton
                     text: "Terminal"
-                    fontFamily: window.generalFontFamily
-                    fontSize: window.generalFontSize
-                    buttonRadius: window.generalRadius
                 }
             }
 
@@ -125,7 +148,7 @@ ApplicationWindow {
 
                     anchors {
                         verticalCenter: titleBarWindow.verticalCenter
-                        right: parent.right
+                        right: titleBarWindow.right
                     }
 
                     Rectangle {
@@ -145,8 +168,8 @@ ApplicationWindow {
                         Rectangle {
                             width: 8
                             height: 2
-                            anchors.centerIn: parent
                             color: window.generaltextColor
+                            anchors.centerIn: parent
                         }
                     }
 
@@ -217,47 +240,73 @@ ApplicationWindow {
         // CONTENT
         Item {
             id: content
-            height: 32
-
             anchors {
                 top: titleBar.bottom
                 left: screen.left
                 right: screen.right
                 bottom: screen.bottom
-
-                topMargin: 0
                 margins: 4
+                topMargin: -2
             }
 
-            BubbleRect {
-                id: leftPanel
-                width: 200
-                height: 200
-                color: window.mainColor
-                border.color: "black"
-                border.width: window.generalBorderWidth
-                rectRadius: window.generalRadius
-                anchors {
-                    left: content.left
-                    top: content.top
-                    bottom: content.bottom
-                    rightMargin: 2
+            SplitView {
+                anchors.fill: parent
+                orientation: Qt.Horizontal
+                handle: Rectangle {
+                    implicitWidth: 3
+                    color: "transparent"
+                    Rectangle {
+                        anchors.centerIn: parent
+                        width: 1
+                        height: 64
+                        color: "black"
+                    }
                 }
-            }
-            BubbleRect {
-                id: mainPanel
-                width: 200
-                height: 200
-                color: window.mainColor
-                border.color: "black"
-                border.width: window.generalBorderWidth
-                rectRadius: window.generalRadius
-                anchors {
-                    left: leftPanel.right
-                    right: content.right
-                    top: content.top
-                    bottom: content.bottom
-                    leftMargin: 2
+
+                BubbleRect {
+                    id: leftPanel
+                    SplitView.minimumWidth: 128
+                    SplitView.maximumWidth: 256
+                    color: window.mainColor
+                    border.color: "black"
+                    border.width: window.generalBorderWidth
+                    rectRadius: window.generalRadius
+                    anchors {
+                        left: content.left
+                        top: content.top
+                        bottom: content.bottom
+                        rightMargin: 3
+                    }
+                }
+
+                BubbleRect {
+                    id: mainPanel
+                    color: window.mainColor
+                    border.color: "black"
+                    border.width: window.generalBorderWidth
+                    rectRadius: window.generalRadius
+                    anchors {
+                        left: leftPanel.right
+                        right: content.right
+                        top: content.top
+                        bottom: content.bottom
+                        leftMargin: 3
+                    }
+
+                    Button {
+                        text: "Open File Explorer"
+                        anchors.centerIn: parent
+                        onClicked: {
+                            fileDialog.open();
+                        }
+                    }
+                    FileDialog {
+                        id: fileDialog
+                        title: "Select a file"
+                        onAccepted: {
+                            console.log("Selected file: " + selectedFile);
+                        }
+                    }
                 }
             }
         }

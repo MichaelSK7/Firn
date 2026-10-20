@@ -38,12 +38,12 @@ Rectangle {
 
                 width: root.boxWidth
                 height: root.boxHeight
-                color: mouseArea.containsMouse ? "#d1b2e0" : "#eee6d6" // d1b2e0 eee6d6
+                color: mArea.containsMouse ? "#d1b2e0" : "#eee6d6" // d1b2e0 eee6d6
                 radius: 5
                 antialiasing: true
 
                 MouseArea {
-                    id: mouseArea
+                    id: mArea
                     anchors.fill: parent
 
                     hoverEnabled: true

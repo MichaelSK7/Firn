@@ -3,21 +3,21 @@ import QtQuick
 
 Rectangle {
     id: box
-    width: buttonWidth > textItem.implicitWidth + horizontalPadding * 2 ? buttonWidth : textItem.implicitWidth + horizontalPadding * 2
-    height: buttonHeight
+    width: Math.round(buttonWidth > textItem.implicitWidth + horizontalPadding * 2 ? buttonWidth : textItem.implicitWidth + horizontalPadding * 2)
+    height: Math.round(buttonHeight)
     radius: buttonRadius
-    antialiasing: false
-    color: mouseArea.containsMouse ? primaryColor : "transparent " // mouseArea.containsMouse ? secondaryColor : primaryColor
+    antialiasing: true
+    color: mouseArea.containsMouse ? primaryColor : "transparent "
 
     property string text: ""
-    property string fontFamily: "Soegoe UI"
-    property int fontSize: 14
+    property string fontFamily: "Inter"
+    property int fontSize: 12
     property bool bold: false
 
     property int buttonWidth: 20
     property int buttonHeight: 20
     property int borderWidth: 2
-    property int buttonRadius: 8
+    property int buttonRadius: 4
 
     property int horizontalPadding: 8
 
@@ -31,11 +31,16 @@ Rectangle {
         id: textItem
         color: box.textColor
 
-        anchors.fill: parent
-        anchors.leftMargin: box.horizontalPadding
-        anchors.rightMargin: box.horizontalPadding
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: Math.round(box.horizontalPadding)
+
+        width: Math.round(parent.width - (box.horizontalPadding * 2))
+
+        renderType: Text.QtRendering
 
         verticalAlignment: Text.AlignVCenter
+
         text: box.text
         font.pixelSize: box.fontSize
         font.bold: box.bold
