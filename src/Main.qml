@@ -42,13 +42,6 @@ ApplicationWindow {
         clip: true
         border.width: window.generalBorderWidth
         border.color: "black"
-        MouseArea {
-            id: globalMouseArea
-            anchors.fill: parent
-            onClicked: {
-                filePopup.visible = false;
-            }
-        }
 
         Item {
             id: titleBar
@@ -64,18 +57,15 @@ ApplicationWindow {
                 rightMargin: 5
             }
 
-            Rectangle {
+            Item {
                 id: appIcon
                 width: 16
-                //border.width: 1
-                //border.color: "Black"
-                color: "transparent"
 
                 anchors {
                     left: titleBar.left
                     top: titleBar.top
                     bottom: titleBar.bottom
-                    leftMargin: 6
+                    leftMargin: 4
                 }
 
                 Image {
@@ -90,6 +80,7 @@ ApplicationWindow {
                 id: titleBarButtons
                 anchors {
                     left: appIcon.right
+                    leftMargin: 0
                     verticalCenter: parent.verticalCenter
                 }
 
@@ -97,12 +88,14 @@ ApplicationWindow {
                     id: fileButton
                     text: "File"
                     mouseArea.onClicked: filePopup.visible = !filePopup.visible
+
                     VTextBoxGroup {
                         id: filePopup
                         z: 1
                         anchors {
                             left: fileButton.left
                             top: fileButton.bottom
+                            margins: 0
                         }
                         visible: false
                         texts: ["New file", "Open file", "Open folder"]
@@ -173,40 +166,40 @@ ApplicationWindow {
                         }
                     }
 
-                    Rectangle {
-                        id: maximize
-                        width: 20
-                        height: 20
-                        radius: titleBarWindowButtons.titleBarWindowButtonsRadius
-                        color: maximizeMouseArea.containsMouse ? "dark orange" /* window.primaryButtonBackgroundColor */ : window.secondaryButtonBackgroundColor
-
-                        Rectangle {
-                            width: 8
-                            height: 8
-                            color: window.generaltextColor
-                            anchors.centerIn: parent
-
-                            Rectangle {
-                                width: 4
-                                height: 4
-                                color: window.visibility === Window.Maximized ? parent.color : maximize.color
-                                anchors.centerIn: parent
-                            }
-                        }
-
-                        MouseArea {
-                            id: maximizeMouseArea
-                            anchors.fill: maximize
-                            hoverEnabled: true
-                            onClicked: {
-                                if (window.visibility === Window.Maximized) {
-                                    window.showNormal();
-                                } else {
-                                    window.showMaximized();
-                                }
-                            }
-                        }
-                    }
+                    //Rectangle {
+                    //    id: maximize
+                    //    width: 20
+                    //    height: 20
+                    //    radius: titleBarWindowButtons.titleBarWindowButtonsRadius
+                    //    color: maximizeMouseArea.containsMouse ? "dark orange" /* window.primaryButtonBackgroundColor */ : window.secondaryButtonBackgroundColor
+                    //
+                    //    Rectangle {
+                    //        width: 8
+                    //        height: 8
+                    //        color: window.generaltextColor
+                    //        anchors.centerIn: parent
+                    //
+                    //        Rectangle {
+                    //            width: 4
+                    //            height: 4
+                    //            color: window.visibility === Window.Maximized ? parent.color : maximize.color
+                    //            anchors.centerIn: parent
+                    //        }
+                    //    }
+                    //
+                    //    MouseArea {
+                    //        id: maximizeMouseArea
+                    //        anchors.fill: maximize
+                    //        hoverEnabled: true
+                    //        onClicked: {
+                    //            if (window.visibility === Window.Maximized) {
+                    //                window.showNormal();
+                    //            } else {
+                    //                window.showMaximized();
+                    //            }
+                    //        }
+                    //    }
+                    //}
 
                     Rectangle {
                         id: exitProgram
@@ -249,63 +242,76 @@ ApplicationWindow {
                 topMargin: -2
             }
 
-            SplitView {
-                anchors.fill: parent
-                orientation: Qt.Horizontal
-                handle: Rectangle {
-                    implicitWidth: 3
-                    color: "transparent"
-                    Rectangle {
-                        anchors.centerIn: parent
-                        width: 1
-                        height: 64
-                        color: "black"
+            BubbleRect {
+                id: leftPanel
+                width: 140
+                color: window.mainColor
+                border.color: "black"
+                border.width: window.generalBorderWidth
+                rectRadius: window.generalRadius
+                anchors {
+                    left: content.left
+                    top: content.top
+                    bottom: content.bottom
+                    rightMargin: 3
+                }
+
+                Grid {
+                    property int buttonCount: columns + rows
+                    columns: 2
+                    rows: 6
+                    spacing: 4
+                    anchors {
+                        left: parent.left
+                        top: parent.top
+                        leftMargin: 4
+                        topMargin: 4
+                    }
+
+                    Repeater {
+                        id: repeater
+                        model: 12
+                        ScriptButton {
+                            id: scriptbutton
+                            required property int index
+                            Text {
+                                anchors.centerIn: parent
+                                text: (scriptbutton.index + 1).toString()
+                                font.bold: true
+                                font.pixelSize: 16
+                            }
+                        }
+                    }
+                }
+            }
+
+            BubbleRect {
+                id: mainPanel
+                color: window.mainColor
+                border.color: "black"
+                border.width: window.generalBorderWidth
+                rectRadius: window.generalRadius
+                anchors {
+                    left: leftPanel.right
+                    right: content.right
+                    top: content.top
+                    bottom: content.bottom
+                    leftMargin: 3
+                }
+
+                Button {
+                    text: "Open File Explorer"
+                    anchors.centerIn: parent
+                    onClicked: {
+                        fileDialog.open();
                     }
                 }
 
-                BubbleRect {
-                    id: leftPanel
-                    SplitView.minimumWidth: 128
-                    SplitView.maximumWidth: 256
-                    color: window.mainColor
-                    border.color: "black"
-                    border.width: window.generalBorderWidth
-                    rectRadius: window.generalRadius
-                    anchors {
-                        left: content.left
-                        top: content.top
-                        bottom: content.bottom
-                        rightMargin: 3
-                    }
-                }
-
-                BubbleRect {
-                    id: mainPanel
-                    color: window.mainColor
-                    border.color: "black"
-                    border.width: window.generalBorderWidth
-                    rectRadius: window.generalRadius
-                    anchors {
-                        left: leftPanel.right
-                        right: content.right
-                        top: content.top
-                        bottom: content.bottom
-                        leftMargin: 3
-                    }
-
-                    Button {
-                        text: "Open File Explorer"
-                        anchors.centerIn: parent
-                        onClicked: {
-                            fileDialog.open();
-                        }
-                    }
-                    FileDialog {
-                        id: fileDialog
-                        title: "Select a file"
-                        onAccepted: {
-                            console.log("Selected file: " + selectedFile);
-                        }
+                FileDialog {
+                    id: fileDialog
+                    title: "Select a file"
+                    onAccepted: {
+                        console.log("Selected file: " + selectedFile);
                     }
                 }
             }

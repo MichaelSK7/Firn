@@ -38,12 +38,14 @@ qt_add_qml_module(Firn
         src/qml/generic/Cross.qml
         src/qml/generic/HTextBoxGroup.qml
         src/qml/generic/VTextBoxGroup.qml
+        src/qml/generic/ScriptButton.qml
     RESOURCES
         res/assets/Firn_appIcon.png
 )
 
 # C++ subfolder
 add_subdirectory(src/cpp)
+add_subdirectory(vendor)
 
 target_link_libraries(Firn PRIVATE
     Qt6::Quick
@@ -64,4 +66,8 @@ install(TARGETS Firn
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+
+target_compile_definitions(Firn PRIVATE
+    USERDATA_DIR="${CMAKE_SOURCE_DIR}/userdata"
 )

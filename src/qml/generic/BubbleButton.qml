@@ -30,6 +30,11 @@ Rectangle {
     Text {
         id: textItem
         color: box.textColor
+        text: box.text
+        font.pixelSize: box.fontSize
+        font.bold: box.bold
+        font.family: box.fontFamily
+        font.weight: Font.Bold
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.left: parent.left
@@ -40,12 +45,6 @@ Rectangle {
         renderType: Text.QtRendering
 
         verticalAlignment: Text.AlignVCenter
-
-        text: box.text
-        font.pixelSize: box.fontSize
-        font.bold: box.bold
-        font.family: box.fontFamily
-        font.weight: Font.Bold
     }
 
     MouseArea {

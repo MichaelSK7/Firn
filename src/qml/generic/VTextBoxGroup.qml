@@ -3,28 +3,33 @@ import QtQuick
 
 Rectangle {
     id: root
-
     width: contentColumn.implicitWidth + 8
     height: contentColumn.implicitHeight + 8
+    radius: boxRadius
+    color: secondaryColor
+    border.width: borderWidth
+    border.color: "black"
+    antialiasing: false
 
     property list<string> texts: ["First", "Second", "Third"]
     property list<string> helpTexts: ["First", "Second", "Third"]
     property int boxWidth: 150
     property int boxHeight: 20
     property int boxSpacing: 5
-    property bool isInputAllowed: false
 
-    radius: 5
-    color: "#eee6d6"
+    property string fontFamily: "Inter"
+    property int fontSize: 12
+    property bool bold: false
 
-    border {
-        color: "#660099"
-        width: 1
-    }
+    property int borderWidth: 1
+    property int boxRadius: 4
+
+    property color primaryColor: "#495149"
+    property color secondaryColor: "#313831"
+    property color textColor: "#C4CCC3"
 
     Column {
         id: contentColumn
-
         spacing: root.boxSpacing
         anchors.centerIn: parent
 
@@ -32,27 +37,22 @@ Rectangle {
             id: boxRepeater
             model: root.texts.length
 
-            Rectangle {
+            BubbleButton {
                 id: box
                 required property int index
-
                 width: root.boxWidth
                 height: root.boxHeight
-                color: mArea.containsMouse ? "#d1b2e0" : "#eee6d6" // d1b2e0 eee6d6
-                radius: 5
+                radius: 4
                 antialiasing: true
-
-                MouseArea {
-                    id: mArea
-                    anchors.fill: parent
-
-                    hoverEnabled: true
-                }
 
                 Text {
                     id: boxText
                     text: root.texts[box.index]
-                    color: "#320051"
+                    font.pixelSize: root.fontSize
+                    font.bold: root.bold
+                    font.family: root.fontFamily
+                    font.weight: Font.Bold
+                    color: root.textColor
 
                     anchors {
                         fill: parent
@@ -63,12 +63,15 @@ Rectangle {
 
                     verticalAlignment: TextInput.AlignVCenter
                 }
-
                 Text {
                     id: helpText
                     text: root.helpTexts[box.index]
-                    color: "#320051"
+                    font.pixelSize: root.fontSize
+                    font.bold: root.bold
+                    font.family: root.fontFamily
+                    font.weight: Font.Bold
                     opacity: 0.5
+                    color: root.textColor
 
                     anchors {
                         verticalCenter: boxText.verticalCenter

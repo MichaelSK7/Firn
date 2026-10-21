@@ -9,15 +9,11 @@ Rectangle {
     antialiasing: false
     color: "#313831"
 
-    property string text: ""
-    property string fontFamily: "Soegoe UI"
-    property int fontSize: 14
+    property string fontFamily: "Inter"
+    property int fontSize: 12
     property bool bold: false
 
-    property int rectWidth: 20
-    property int rectHeight: 20
-    property int rectRadius: 8
-    property int borderWidth: 2
-
-    property int horizontalPadding: 8
+    property int rectWidth: 64
+    property int rectHeight: 64
+    property int rectRadius: 4
 }
