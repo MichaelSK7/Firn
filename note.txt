@@ -1,0 +1,60 @@
+BubbleRect {
+                id: leftPanel
+                width: 140
+                color: window.mainColor
+                border.color: "black"
+                border.width: window.generalBorderWidth
+                rectRadius: window.generalRadius
+                anchors {
+                    left: content.left
+                    top: content.top
+                    bottom: content.bottom
+                    rightMargin: 3
+                }
+
+                Grid {
+                    property int buttonCount: columns + rows
+                    columns: 2
+                    rows: 6
+                    spacing: 4
+                    anchors {
+                        left: parent.left
+                        top: parent.top
+                        leftMargin: 4
+                        topMargin: 4
+                    }
+
+                    Repeater {
+                        id: repeater
+                        model: 12
+                        ScriptButton {
+                            id: scriptbutton
+                            required property int index
+                            Text {
+                                anchors.centerIn: parent
+                                text: (scriptbutton.index + 1).toString()
+                                font.bold: true
+                                font.pixelSize: 16
+                            }
+                        }
+                    }
+                }
+            }
+
+                property string generalFontFamily: "Inter"
+    property int generalFontSize: 12
+    property int generalRadius: 4
+    property int generalBorderWidth: 1
+    property color generaltextColor: "#C4CCC3"
+
+    property color mainBackgroundColor: "#313831"
+    property color secondaryBackgroundColor: "#0e130e"
+    property color mainBorderColor: "#000000"
+    property color mainColor: "#495149"
+    property color mainMiscColor: "#71833b"
+    property color accentColor: "#2d682d"
+
+    property color primaryButtonBackgroundColor: "#495149"
+    property color secondaryButtonBackgroundColor: "#313831"
+
+    property color mainButtonColor: "#213a21"

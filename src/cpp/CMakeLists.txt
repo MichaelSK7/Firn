@@ -1,21 +1,37 @@
-file(GLOB_RECURSE CPP_SOURCES CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+set(CPP_SOURCES
+    ${CMAKE_CURRENT_SOURCE_DIR}/userData.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/save.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/util/mklog.cpp
+
+
 )
 
-qt_add_library(FirnCpp STATIC ${CPP_SOURCES})
+set(CPP_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/userData.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/folderPathHelper.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/save.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/util/mklog.hpp
 
-target_include_directories(FirnCpp PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../vendor
+)
+
+qt_add_library(FirnCpp STATIC
+    ${CPP_SOURCES}
+    ${CPP_HEADERS}
+)
+
+target_include_directories(FirnCpp
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../vendor
 )
 
 target_link_libraries(FirnCpp
-    PUBLIC 
+    PUBLIC
         Qt6::Core
+        VendorCpp
 )
 
-target_compile_definitions(FirnCpp PRIVATE
-    USERDATA_DIR="${CMAKE_SOURCE_DIR}/userdata"
+target_compile_definitions(FirnCpp
+    PRIVATE
+        USERDATA_DIR="${CMAKE_SOURCE_DIR}/userdata"
 )
 

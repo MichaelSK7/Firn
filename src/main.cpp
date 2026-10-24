@@ -2,20 +2,26 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 
-#include "src/cpp/test.hpp"
+#include <iostream>
+
+#include "src/cpp/folderPathHelper.hpp"
 #include "src/cpp/userData.hpp"
+#include "src/cpp/util/mklog.hpp"
 
 int main(int argc, char* argv[]) {
-
     QGuiApplication app(argc, argv);
 
-    foo testClass;
-    bob::fo();
+    FolderPathHelper folderPathHelper;
+    userData userData;
 
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("classA", &testClass);
+    engine.rootContext()->setContextProperty("folderPathHelper", &folderPathHelper);
 
     engine.loadFromModule("Firn", "Main");
+
+    if (engine.rootObjects().isEmpty()) {
+        return -1;
+    }
 
     return app.exec();
 }

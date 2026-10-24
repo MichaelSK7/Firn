@@ -1,0 +1,6 @@
+[INFO] test1
+[INFO] test2
+[INFO] test1
+[INFO] test2
+[INFO] test1
+[INFO] test2

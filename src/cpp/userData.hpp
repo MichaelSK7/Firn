@@ -2,12 +2,31 @@
 
 #include <QObject>
 
-class foo : public QObject {
+#include <filesystem>
+#include <fstream>
+
+#include "nlohmann/json.hpp"
+
+using json = nlohmann::json;
+namespace fs = std::filesystem;
+
+class userData : public QObject {
     Q_OBJECT
+  private:
+    json userSettingsJson;
+
+    fs::path defaultPresetPath;
+    std::ofstream outputStream;
+    std::ifstream inputStream;
 
   public:
-    explicit foo(QObject* parent = nullptr);
+    userData();
 
-  public slots:
-    void callMe();
+    void loadUserSettings();
+    void loadDefaultPreset();
+
+    void makePreset();
+
+    void createUserSettings();
+    void createDefaultSettings();
 };

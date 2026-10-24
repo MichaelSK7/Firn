@@ -19,3 +19,17 @@ Neon green:
 Red:
 #230a0c
 #c92032
+
+#2b2f33 
+#50565c
+#8a9197
+#c9cdd1 
+#f2f3f4
+
+#a04b2b 
+#d08a63 
+#f3e7dc
+
+#C4CCC3
+
+#2c251f 

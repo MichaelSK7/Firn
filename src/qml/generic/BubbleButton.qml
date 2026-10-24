@@ -21,8 +21,8 @@ Rectangle {
 
     property int horizontalPadding: 8
 
-    property color primaryColor: "#495149"
-    property color secondaryColor: "#313831"
+    property color primaryColor: "#50565c"
+    property color secondaryColor: "#8a9197"
     property color textColor: "#C4CCC3"
 
     property alias mouseArea: mArea

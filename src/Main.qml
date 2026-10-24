@@ -21,15 +21,15 @@ ApplicationWindow {
     property int generalBorderWidth: 1
     property color generaltextColor: "#C4CCC3"
 
-    property color mainBackgroundColor: "#313831"
+    property color mainBackgroundColor: "#1f2326"
     property color secondaryBackgroundColor: "#0e130e"
     property color mainBorderColor: "#000000"
-    property color mainColor: "#495149"
+    property color mainColor: "#50565c"
     property color mainMiscColor: "#71833b"
     property color accentColor: "#2d682d"
 
-    property color primaryButtonBackgroundColor: "#495149"
-    property color secondaryButtonBackgroundColor: "#313831"
+    property color primaryButtonBackgroundColor: "#50565c"
+    property color secondaryButtonBackgroundColor: "#1f2326"
 
     property color mainButtonColor: "#213a21"
 
@@ -57,30 +57,11 @@ ApplicationWindow {
                 rightMargin: 5
             }
 
-            Item {
-                id: appIcon
-                width: 16
-
-                anchors {
-                    left: titleBar.left
-                    top: titleBar.top
-                    bottom: titleBar.bottom
-                    leftMargin: 4
-                }
-
-                Image {
-                    source: "qrc:/qt/qml/Firn/res/assets/Firn_appIcon.png"
-                    width: 16
-                    height: 16
-                    anchors.centerIn: parent
-                }
-            }
-
             Row {
                 id: titleBarButtons
                 anchors {
-                    left: appIcon.right
-                    leftMargin: 0
+                    left: titleBar.left
+                    leftMargin: 4
                     verticalCenter: parent.verticalCenter
                 }
 
@@ -101,25 +82,10 @@ ApplicationWindow {
                         texts: ["New file", "Open file", "Open folder"]
                     }
                 }
+
                 BubbleButton {
-                    id: editButton
-                    text: "Edit"
-                }
-                BubbleButton {
-                    id: viewButton
-                    text: "View"
-                }
-                BubbleButton {
-                    id: goButton
-                    text: "Go"
-                }
-                BubbleButton {
-                    id: runButton
+                    id: tittleBarRun
                     text: "Run"
-                }
-                BubbleButton {
-                    id: terminalButton
-                    text: "Terminal"
                 }
             }
 
@@ -166,41 +132,6 @@ ApplicationWindow {
                         }
                     }
 
-                    //Rectangle {
-                    //    id: maximize
-                    //    width: 20
-                    //    height: 20
-                    //    radius: titleBarWindowButtons.titleBarWindowButtonsRadius
-                    //    color: maximizeMouseArea.containsMouse ? "dark orange" /* window.primaryButtonBackgroundColor */ : window.secondaryButtonBackgroundColor
-                    //
-                    //    Rectangle {
-                    //        width: 8
-                    //        height: 8
-                    //        color: window.generaltextColor
-                    //        anchors.centerIn: parent
-                    //
-                    //        Rectangle {
-                    //            width: 4
-                    //            height: 4
-                    //            color: window.visibility === Window.Maximized ? parent.color : maximize.color
-                    //            anchors.centerIn: parent
-                    //        }
-                    //    }
-                    //
-                    //    MouseArea {
-                    //        id: maximizeMouseArea
-                    //        anchors.fill: maximize
-                    //        hoverEnabled: true
-                    //        onClicked: {
-                    //            if (window.visibility === Window.Maximized) {
-                    //                window.showNormal();
-                    //            } else {
-                    //                window.showMaximized();
-                    //            }
-                    //        }
-                    //    }
-                    //}
-
                     Rectangle {
                         id: exitProgram
                         width: 20
@@ -242,76 +173,258 @@ ApplicationWindow {
                 topMargin: -2
             }
 
-            BubbleRect {
-                id: leftPanel
-                width: 140
-                color: window.mainColor
-                border.color: "black"
-                border.width: window.generalBorderWidth
-                rectRadius: window.generalRadius
+            Grid {
+                property int buttonCount: rows + columns
+                columns: 2
+                rows: 6
+                spacing: 4
                 anchors {
-                    left: content.left
-                    top: content.top
-                    bottom: content.bottom
-                    rightMargin: 3
+                    fill: parent
+                    leftMargin: 4
                 }
+                Repeater {
+                    id: repeater
+                    model: 10
+                    anchors.fill: parent
 
-                Grid {
-                    property int buttonCount: columns + rows
-                    columns: 2
-                    rows: 6
-                    spacing: 4
-                    anchors {
-                        left: parent.left
-                        top: parent.top
-                        leftMargin: 4
-                        topMargin: 4
-                    }
+                    delegate: Item {
+                        id: dUnit
+                        required property int index
+                        objectName: "unit_" + index
+                        width: 310
+                        height: 86
 
-                    Repeater {
-                        id: repeater
-                        model: 12
-                        ScriptButton {
-                            id: scriptbutton
-                            required property int index
-                            Text {
-                                anchors.centerIn: parent
-                                text: (scriptbutton.index + 1).toString()
-                                font.bold: true
-                                font.pixelSize: 16
+                        BubbleRect {
+                            id: unit
+                            width: 310
+                            height: 86
+                            color: "#3f4449"
+                            border.color: "black"
+                            border.width: 2
+                            rectRadius: 4
+
+                            ScriptButton {
+                                id: runButton
+                                antialiasing: true
+                                width: 64
+                                height: 64
+                                property bool selected: false
+                                color: selected ? "#660099" : "#50565c"
+                                anchors {
+                                    verticalCenter: parent.verticalCenter
+                                    right: parent.right
+                                    rightMargin: 4
+                                    topMargin: 4
+                                }
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "SELECT"
+                                    font.pixelSize: 12
+                                    font.bold: true
+                                    font.family: "Inter"
+                                    font.weight: Font.Bold
+                                    color: "#C4CCC3"
+                                }
+                                MouseArea {
+                                    id: mArea
+                                    anchors.fill: parent
+                                    onClicked: runButton.selected = !runButton.selected
+                                }
+                            }
+
+                            ScriptButton {
+                                id: sourceDialogButton
+                                width: 30
+                                height: 30
+
+                                anchors {
+                                    right: runButton.left
+                                    top: runButton.top
+                                    rightMargin: 2
+                                }
+                                Text {
+                                    anchors.centerIn: parent
+                                    text: "S"
+                                    font.pixelSize: 12
+                                    font.bold: true
+                                    font.family: "Inter"
+                                    font.weight: Font.Bold
+                                    color: "#C4CCC3"
+                                }
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: folderDialog.open()
+                                }
+                                FolderDialog {
+                                    id: folderDialog
+
+                                    onAccepted: {
+                                        console.log("Selected folder:", folderPathHelper.toLocalPath(folderDialog.selectedFolder));
+                                    }
+                                }
+                            }
+
+                            BubbleRect {
+                                id: sourceLabel
+                                width: 32
+                                height: 20
+                                color: "#50565c"
+                                border.color: "black"
+                                border.width: 2
+                                rectRadius: 4
+                                clip: true
+                                anchors {
+                                    verticalCenter: sourceDialogButton.verticalCenter
+                                    left: unit.left
+                                    leftMargin: 6
+                                    right: sourceDialogButton.left
+                                    rightMargin: 4
+                                }
+                                Item {
+                                    id: sourceTextViewport
+
+                                    anchors {
+                                        left: parent.left
+                                        leftMargin: 4
+                                        right: parent.right
+                                        rightMargin: 4
+                                        top: parent.top
+                                        bottom: parent.bottom
+                                    }
+
+                                    clip: true
+
+                                    Text {
+                                        id: sourceText
+
+                                        text: folderPathHelper.toLocalPath(folderDialog.selectedFolder)
+                                        font.pixelSize: 10
+                                        font.bold: true
+                                        font.family: "Inter"
+                                        color: "#C4CCC3"
+
+                                        y: (parent.height - height) / 2
+                                        onTextChanged: {
+                                            sourceScrollAnimation.stop();
+                                            x = 0;
+                                        }
+                                    }
+                                }
+                                MouseArea {
+                                    id: sourceLabelMouseArea
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                }
+                                NumberAnimation {
+                                    id: sourceScrollAnimation
+                                    target: sourceText
+                                    property: "x"
+                                    from: 0
+                                    to: -sourceText.width
+                                    duration: 5000
+                                    loops: Animation.Infinite
+
+                                    running: sourceLabelMouseArea.containsMouse && sourceText.width > sourceTextViewport.width
+
+                                    easing.type: Easing.Linear
+                                }
+                            }
+
+                            ScriptButton {
+                                id: destinationDialogButton
+                                width: 30
+                                height: 30
+                                anchors {
+                                    right: runButton.left
+                                    bottom: runButton.bottom
+                                    rightMargin: 2
+                                }
+                                Text {
+                                    x: 11
+                                    y: 8
+                                    text: "D"
+                                    font.pixelSize: 12
+                                    font.bold: true
+                                    font.family: "Inter"
+                                    font.weight: Font.Bold
+                                    color: "#C4CCC3"
+                                }
+                                MouseArea {
+                                    anchors.fill: parent
+                                    onClicked: destinationFolderDialog.open()
+                                }
+                                FolderDialog {
+                                    id: destinationFolderDialog
+                                    onAccepted: {
+                                        console.log("Selected folder:", folderPathHelper.toLocalPath(destinationFolderDialog.selectedFolder));
+                                    }
+                                }
+                            }
+
+                            BubbleRect {
+                                id: destinationLabel
+                                width: 32
+                                height: 20
+                                color: "#50565c"
+                                border.color: "black"
+                                border.width: 2
+                                rectRadius: 4
+                                anchors {
+                                    verticalCenter: destinationDialogButton.verticalCenter
+                                    left: unit.left
+                                    leftMargin: 6
+                                    right: destinationDialogButton.left
+                                    rightMargin: 4
+                                }
+                                Item {
+                                    id: destinationTextViewport
+
+                                    anchors {
+                                        left: parent.left
+                                        leftMargin: 4
+                                        right: parent.right
+                                        rightMargin: 4
+                                        top: parent.top
+                                        bottom: parent.bottom
+                                    }
+
+                                    clip: true
+
+                                    Text {
+                                        id: destinationText
+                                        text: folderPathHelper.toLocalPath(destinationFolderDialog.selectedFolder)
+                                        font.pixelSize: 10
+                                        font.bold: true
+                                        font.family: "Inter"
+                                        color: "#C4CCC3"
+
+                                        y: (parent.height - height) / 2
+                                        onTextChanged: {
+                                            destinationScrollAnimation.stop();
+                                            x = 0;
+                                        }
+                                    }
+                                }
+                                MouseArea {
+                                    id: destinationLabelMouseArea
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                }
+                                NumberAnimation {
+                                    id: destinationScrollAnimation
+                                    target: destinationText
+                                    property: "x"
+                                    from: 0
+                                    to: -destinationText.width
+                                    duration: 5000
+                                    loops: Animation.Infinite
+
+                                    running: destinationLabelMouseArea.containsMouse && destinationText.width > destinationTextViewport.width
+
+                                    easing.type: Easing.Linear
+                                }
                             }
                         }
-                    }
-                }
-            }
-
-            BubbleRect {
-                id: mainPanel
-                color: window.mainColor
-                border.color: "black"
-                border.width: window.generalBorderWidth
-                rectRadius: window.generalRadius
-                anchors {
-                    left: leftPanel.right
-                    right: content.right
-                    top: content.top
-                    bottom: content.bottom
-                    leftMargin: 3
-                }
-
-                Button {
-                    text: "Open File Explorer"
-                    anchors.centerIn: parent
-                    onClicked: {
-                        fileDialog.open();
-                    }
-                }
-
-                FileDialog {
-                    id: fileDialog
-                    title: "Select a file"
-                    onAccepted: {
-                        console.log("Selected file: " + selectedFile);
                     }
                 }
             }

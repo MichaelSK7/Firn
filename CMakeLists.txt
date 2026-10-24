@@ -71,3 +71,7 @@ install(TARGETS Firn
 target_compile_definitions(Firn PRIVATE
     USERDATA_DIR="${CMAKE_SOURCE_DIR}/userdata"
 )
+
+target_compile_definitions(FirnCpp PUBLIC
+        LOG_DIR="${CMAKE_SOURCE_DIR}/log"
+)

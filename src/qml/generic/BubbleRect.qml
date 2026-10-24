@@ -7,7 +7,7 @@ Rectangle {
     height: rectHeight
     radius: rectRadius
     antialiasing: false
-    color: "#313831"
+    color: "#3f4449"
 
     property string fontFamily: "Inter"
     property int fontSize: 12

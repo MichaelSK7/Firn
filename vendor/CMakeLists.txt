@@ -1,11 +1,17 @@
-file(GLOB_RECURSE CPP_SOURCES CONFIGURE_DEPENDS
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
+set(CPP_SOURCES
 )
 
+set(CPP_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/nlohmann/json_fwd.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/nlohmann/json_literals.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/nlohmann/json_view.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/nlohmann/json.hpp
+)
 
-qt_add_library(VendorCpp STATIC ${CPP_SOURCES})
+qt_add_library(VendorCpp STATIC
+    ${CPP_SOURCES}
+    ${CPP_HEADERS}
+)
 
 target_link_libraries(VendorCpp
     PUBLIC Qt6::Core
@@ -14,3 +20,5 @@ target_link_libraries(VendorCpp
 target_include_directories(VendorCpp PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
 )
+
+
