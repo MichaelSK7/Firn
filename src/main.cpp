@@ -12,11 +12,12 @@ int main(int argc, char* argv[]) {
     QGuiApplication app(argc, argv);
 
     FolderPathHelper folderPathHelper;
-    userData userData;
+    UserData userData;
 
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("folderPathHelper", &folderPathHelper);
 
+    engine.rootContext()->setContextProperty("userData", &userData);
+    engine.rootContext()->setContextProperty("folderPathHelper", &folderPathHelper);
     engine.loadFromModule("Firn", "Main");
 
     if (engine.rootObjects().isEmpty()) {

@@ -15,6 +15,8 @@ ApplicationWindow {
 
     flags: Qt.Window | Qt.FramelessWindowHint
 
+    property string currentPresetName: userData.currentPresetName
+
     property string generalFontFamily: "Inter"
     property int generalFontSize: 12
     property int generalRadius: 4
@@ -33,20 +35,27 @@ ApplicationWindow {
 
     property color mainButtonColor: "#213a21"
 
+    property var popups: [presetPopup, filePopup]
+    function closeAllPopups() {
+        for (let popup of popups) {
+            popup.visible = false;
+        }
+    }
+
     Rectangle {
         id: screen
+        z: 1
         anchors.fill: parent
         radius: window.visibility === Window.Maximized ? 0 : window.generalRadius
         antialiasing: true
         color: window.mainBackgroundColor
-        clip: true
         border.width: window.generalBorderWidth
         border.color: "black"
 
         Item {
             id: titleBar
             height: 30
-            z: 100
+            z: 20
             width: titleBarButtons.implicitWidth
             antialiasing: true
             anchors {
@@ -56,37 +65,123 @@ ApplicationWindow {
                 leftMargin: 4
                 rightMargin: 5
             }
-
             Row {
                 id: titleBarButtons
+                z: 21
+
                 anchors {
                     left: titleBar.left
                     leftMargin: 4
-                    verticalCenter: parent.verticalCenter
+                    top: titleBar.top
+                    topMargin: 5
                 }
 
                 BubbleButton {
                     id: fileButton
-                    text: "File"
-                    mouseArea.onClicked: filePopup.visible = !filePopup.visible
-
-                    VTextBoxGroup {
-                        id: filePopup
-                        z: 1
-                        anchors {
-                            left: fileButton.left
-                            top: fileButton.bottom
-                            margins: 0
+                    text: "Edit"
+                    bubbleButtonMouseArea.onClicked: {
+                        if (filePopup.visible == true) {
+                            window.closeAllPopups();
+                            return;
                         }
-                        visible: false
-                        texts: ["New file", "Open file", "Open folder"]
+                        window.closeAllPopups();
+                        filePopup.visible = true;
+                    }
+                    secondaryColor: {
+                        if (filePopup.visible == true) {
+                            return "#50565c";
+                        } else {
+                            return "transparent";
+                        }
                     }
                 }
 
                 BubbleButton {
-                    id: tittleBarRun
+                    id: presetButton
+                    text: "Presets"
+                    bubbleButtonMouseArea.onClicked: {
+                        if (presetPopup.visible == true) {
+                            window.closeAllPopups();
+                            return;
+                        }
+                        window.closeAllPopups();
+                        presetPopup.visible = true;
+                    }
+                    secondaryColor: {
+                        if (presetPopup.visible == true) {
+                            return "#50565c";
+                        } else {
+                            return "transparent";
+                        }
+                    }
+                }
+
+                BubbleButton {
+                    id: titleBarRun
                     text: "Run"
                 }
+            }
+            VTextBoxGroup {
+                id: filePopup
+                visible: false
+                z: 22
+
+                x: presetButton.x + 3
+                y: titleBarButtons.y + presetButton.height
+
+                onActionTriggered: {
+                    visible = false;
+                }
+
+                items: [
+                    {
+                        text: "New preset",
+                        helpText: "Ctrl+N",
+                        action: () => {
+                            presetListLoader.setSource("qml/generic/NewPresetPopup.qml", {
+                                "userDataObject": userData
+                            });
+                        }
+                    }
+                ]
+            }
+
+            VTextBoxGroup {
+                id: presetPopup
+                visible: false
+                z: 22
+
+                x: presetButton.x + 3
+                y: titleBarButtons.y + presetButton.height
+
+                onActionTriggered: {
+                    visible = false;
+                }
+
+                items: [
+                    {
+                        text: "New preset",
+                        helpText: "Ctrl+N",
+                        action: () => {
+                            newPresetLoader.setSource("qml/generic/NewPresetPopup.qml", {
+                                "userDataObject": userData
+                            });
+                        }
+                    }
+                ]
+            }
+
+            Text {
+                id: currentPresetLabel
+                z: 15
+                anchors.centerIn: parent
+                text: "Preset: " + window.currentPresetName
+                font.pixelSize: 12
+                font.bold: true
+                font.family: "Inter"
+                font.weight: Font.Bold
+                color: "#C4CCC3"
+                opacity: 0.8
             }
 
             Item {
@@ -159,11 +254,36 @@ ApplicationWindow {
                 }
             }
         }
+        Loader {
+            id: newPresetLoader
+            anchors.centerIn: parent
+            z: 120
+            Connections {
+                target: newPresetLoader.item
 
+                function onCloseRequested() {
+                    newPresetLoader.source = "";
+                }
+            }
+        }
+
+        Loader {
+            id: presetListLoader
+            anchors {}
+            z: 120
+            Connections {
+                target: newPresetLoader.item
+
+                function onCloseRequested() {
+                    newPresetLoader.source = "";
+                }
+            }
+        }
         // ==================================================
         // CONTENT
         Item {
             id: content
+            z: 2
             anchors {
                 top: titleBar.bottom
                 left: screen.left
@@ -204,7 +324,7 @@ ApplicationWindow {
                             rectRadius: 4
 
                             ScriptButton {
-                                id: runButton
+                                id: selectButton
                                 antialiasing: true
                                 width: 64
                                 height: 64
@@ -228,7 +348,7 @@ ApplicationWindow {
                                 MouseArea {
                                     id: mArea
                                     anchors.fill: parent
-                                    onClicked: runButton.selected = !runButton.selected
+                                    onClicked: selectButton.selected = !selectButton.selected
                                 }
                             }
 
@@ -238,8 +358,8 @@ ApplicationWindow {
                                 height: 30
 
                                 anchors {
-                                    right: runButton.left
-                                    top: runButton.top
+                                    right: selectButton.left
+                                    top: selectButton.top
                                     rightMargin: 2
                                 }
                                 Text {
@@ -335,8 +455,8 @@ ApplicationWindow {
                                 width: 30
                                 height: 30
                                 anchors {
-                                    right: runButton.left
-                                    bottom: runButton.bottom
+                                    right: selectButton.left
+                                    bottom: selectButton.bottom
                                     rightMargin: 2
                                 }
                                 Text {

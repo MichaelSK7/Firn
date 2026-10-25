@@ -3,11 +3,11 @@ import QtQuick
 
 Rectangle {
     id: box
-    width: Math.round(buttonWidth > textItem.implicitWidth + horizontalPadding * 2 ? buttonWidth : textItem.implicitWidth + horizontalPadding * 2)
-    height: Math.round(buttonHeight)
+
+    width: Math.max(buttonWidth, textItem.implicitWidth + horizontalPadding * 2)
+    height: buttonHeight
     radius: buttonRadius
-    antialiasing: true
-    color: mouseArea.containsMouse ? primaryColor : "transparent "
+    color: bubbleButtonMouseArea.containsMouse ? primaryColor : secondaryColor
 
     property string text: ""
     property string fontFamily: "Inter"
@@ -16,39 +16,34 @@ Rectangle {
 
     property int buttonWidth: 20
     property int buttonHeight: 20
-    property int borderWidth: 2
     property int buttonRadius: 4
-
     property int horizontalPadding: 8
 
     property color primaryColor: "#50565c"
-    property color secondaryColor: "#8a9197"
+    property color secondaryColor: "transparent"
     property color textColor: "#C4CCC3"
 
-    property alias mouseArea: mArea
+    property alias bubbleButtonMouseArea: bubbleButtonMouseArea1
 
     Text {
         id: textItem
-        color: box.textColor
+
         text: box.text
+        color: box.textColor
+        font.family: box.fontFamily
         font.pixelSize: box.fontSize
         font.bold: box.bold
-        font.family: box.fontFamily
         font.weight: Font.Bold
 
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.left: parent.left
-        anchors.leftMargin: Math.round(box.horizontalPadding)
-
-        width: Math.round(parent.width - (box.horizontalPadding * 2))
-
-        renderType: Text.QtRendering
-
-        verticalAlignment: Text.AlignVCenter
+        anchors {
+            left: parent.left
+            leftMargin: box.horizontalPadding
+            verticalCenter: parent.verticalCenter
+        }
     }
 
     MouseArea {
-        id: mArea
+        id: bubbleButtonMouseArea1
         anchors.fill: parent
         hoverEnabled: true
     }

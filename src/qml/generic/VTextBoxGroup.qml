@@ -3,6 +3,7 @@ import QtQuick
 
 Rectangle {
     id: root
+    signal actionTriggered
     width: contentColumn.implicitWidth + 8
     height: contentColumn.implicitHeight + 8
     radius: boxRadius
@@ -11,8 +12,8 @@ Rectangle {
     border.color: "black"
     antialiasing: false
 
-    property list<string> texts: ["First", "Second", "Third"]
-    property list<string> helpTexts: ["First", "Second", "Third"]
+    property var items: []
+
     property int boxWidth: 150
     property int boxHeight: 20
     property int boxSpacing: 5
@@ -21,11 +22,11 @@ Rectangle {
     property int fontSize: 12
     property bool bold: false
 
-    property int borderWidth: 1
+    property int borderWidth: 2
     property int boxRadius: 4
 
     property color primaryColor: "#50565c"
-    property color secondaryColor: "#8a9197"
+    property color secondaryColor: "#3f4449"
     property color textColor: "#C4CCC3"
 
     Column {
@@ -35,19 +36,33 @@ Rectangle {
 
         Repeater {
             id: boxRepeater
-            model: root.texts.length
+            model: root.items
 
-            BubbleButton {
+            delegate: BubbleRect {
                 id: box
                 required property int index
+                required property var modelData
+
                 width: root.boxWidth
                 height: root.boxHeight
+
                 radius: 4
                 antialiasing: true
-
+                color: boxMouseArea.containsMouse ? root.primaryColor : root.secondaryColor
+                MouseArea {
+                    id: boxMouseArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    onClicked: {
+                        if (box.modelData.action) {
+                            box.modelData.action();
+                            root.actionTriggered();
+                        }
+                    }
+                }
                 Text {
                     id: boxText
-                    text: root.texts[box.index]
+                    text: box.modelData.text
                     font.pixelSize: root.fontSize
                     font.bold: root.bold
                     font.family: root.fontFamily
@@ -65,7 +80,7 @@ Rectangle {
                 }
                 Text {
                     id: helpText
-                    text: root.helpTexts[box.index]
+                    text: box.modelData.helpText
                     font.pixelSize: root.fontSize
                     font.bold: root.bold
                     font.family: root.fontFamily

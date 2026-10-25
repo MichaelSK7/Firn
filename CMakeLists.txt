@@ -39,6 +39,8 @@ qt_add_qml_module(Firn
         src/qml/generic/HTextBoxGroup.qml
         src/qml/generic/VTextBoxGroup.qml
         src/qml/generic/ScriptButton.qml
+        src/qml/generic/NewPresetPopup.qml
+        src/qml/generic/PresetsList.qml
     RESOURCES
         res/assets/Firn_appIcon.png
 )
