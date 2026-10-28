@@ -1,5 +1,4 @@
 # Firn
-___
 *Another way to save information.*
 Just give a source and destination path. When 'run' is clicked, a copy will be created or updated if copy already exists.
 
