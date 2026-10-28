@@ -1,6 +1,5 @@
 pragma ComponentBehavior: Bound
 import QtQuick
-import QtQuick.Controls
 
 BubbleRect {
     id: root
@@ -14,7 +13,7 @@ BubbleRect {
 
     property var userDataObject
 
-    property string text: "Name of preset"
+    property string text: ""
     property int buttonWidth: 20
     property int buttonHeight: 20
     property int buttonRadius: 4
@@ -40,7 +39,7 @@ BubbleRect {
             border.width: 2
             anchors.centerIn: content
 
-            TextField {
+            TextInput {
                 id: textItem
                 focus: true
                 property int maxCharacters: 200
@@ -59,9 +58,7 @@ BubbleRect {
                     leftMargin: root.horizontalPadding
                     verticalCenter: contentField.verticalCenter
                 }
-                background: Rectangle {
-                    color: "transparent"
-                }
+
                 Keys.onReturnPressed: {
                     root.userDataObject.currentPresetName = text;
                     root.closeRequested();
@@ -70,6 +67,18 @@ BubbleRect {
                 Keys.onEnterPressed: {
                     root.userDataObject.currentPresetName = text;
                     root.closeRequested();
+                }
+                Text {
+                    id: placeholderText
+                    text: "Enter a name..."
+                    color: root.textColor
+                    font.family: root.fontFamily
+                    font.pixelSize: root.fontSize
+                    opacity: 0.6
+                    anchors {
+                        verticalCenter: parent.verticalCenter
+                        left: parent.left
+                    }
                 }
             }
         }
@@ -94,7 +103,7 @@ BubbleRect {
                 }
                 bubbleButtonMouseArea.onClicked: {
                     root.userDataObject.currentPresetName = textItem.text;
-                    root.userDataObject.mktest();
+                    root.userDataObject.makePreset(root.text);
                     root.closeRequested();
                 }
             }

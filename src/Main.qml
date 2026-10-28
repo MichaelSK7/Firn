@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Controls.Basic
-import QtQuick.Dialogs
 import "qml/generic"
 
 ApplicationWindow {
@@ -35,10 +34,20 @@ ApplicationWindow {
 
     property color mainButtonColor: "#213a21"
 
-    property var popups: [presetPopup, filePopup]
+    property var popups: [presetPopup]
     function closeAllPopups() {
         for (let popup of popups) {
             popup.visible = false;
+        }
+    }
+
+    function tryQuit() {
+        if (userData.isUnsaved === true) {
+            console.log("wow");
+            unSavedDialog.setSource("qml/generic/UnSavedDialog.qml");
+        } else {
+            Qt.quit();
+            return;
         }
     }
 
@@ -52,6 +61,34 @@ ApplicationWindow {
         border.width: window.generalBorderWidth
         border.color: "black"
 
+        focus: true
+        Keys.onPressed: event => {
+            if (event.modifiers === Qt.ControlModifier && event.key === Qt.Key_E) {
+                window.tryQuit();
+            }
+            if (event.modifiers === Qt.ControlModifier && event.key === Qt.Key_S) {
+                userData.savePreset();
+            }
+            if (event.modifiers === Qt.ControlModifier && event.key === Qt.Key_N) {
+                newPresetLoader.setSource("qml/generic/NewPresetPopup.qml", {
+                    "userDataObject": userData
+                });
+            }
+        }
+        Loader {
+            id: unSavedDialog
+            anchors.centerIn: parent
+            width: 250
+            height: 150
+            z: 120
+            Connections {
+                target: unSavedDialog.item
+
+                function onCloseRequested() {
+                    unSavedDialog.source = "";
+                }
+            }
+        }
         Item {
             id: titleBar
             height: 30
@@ -74,26 +111,6 @@ ApplicationWindow {
                     leftMargin: 4
                     top: titleBar.top
                     topMargin: 5
-                }
-
-                BubbleButton {
-                    id: fileButton
-                    text: "Edit"
-                    bubbleButtonMouseArea.onClicked: {
-                        if (filePopup.visible == true) {
-                            window.closeAllPopups();
-                            return;
-                        }
-                        window.closeAllPopups();
-                        filePopup.visible = true;
-                    }
-                    secondaryColor: {
-                        if (filePopup.visible == true) {
-                            return "#50565c";
-                        } else {
-                            return "transparent";
-                        }
-                    }
                 }
 
                 BubbleButton {
@@ -121,30 +138,6 @@ ApplicationWindow {
                     text: "Run"
                 }
             }
-            VTextBoxGroup {
-                id: filePopup
-                visible: false
-                z: 22
-
-                x: presetButton.x + 3
-                y: titleBarButtons.y + presetButton.height
-
-                onActionTriggered: {
-                    visible = false;
-                }
-
-                items: [
-                    {
-                        text: "New preset",
-                        helpText: "Ctrl+N",
-                        action: () => {
-                            presetListLoader.setSource("qml/generic/NewPresetPopup.qml", {
-                                "userDataObject": userData
-                            });
-                        }
-                    }
-                ]
-            }
 
             VTextBoxGroup {
                 id: presetPopup
@@ -166,6 +159,13 @@ ApplicationWindow {
                             newPresetLoader.setSource("qml/generic/NewPresetPopup.qml", {
                                 "userDataObject": userData
                             });
+                        }
+                    },
+                    {
+                        text: "Save preset",
+                        helpText: "Ctrl+S",
+                        action: () => {
+                            userData.savePreset();
                         }
                     }
                 ]
@@ -240,7 +240,7 @@ ApplicationWindow {
                             id: exitMouseArea
                             anchors.fill: exitProgram
                             hoverEnabled: true
-                            onClicked: Qt.quit()
+                            onClicked: window.tryQuit()
                         }
 
                         Cross {
@@ -257,6 +257,8 @@ ApplicationWindow {
         Loader {
             id: newPresetLoader
             anchors.centerIn: parent
+            width: 250
+            height: 100
             z: 120
             Connections {
                 target: newPresetLoader.item
@@ -269,6 +271,8 @@ ApplicationWindow {
 
         Loader {
             id: presetListLoader
+            width: 250
+            height: 100
             anchors {}
             z: 120
             Connections {
@@ -302,261 +306,57 @@ ApplicationWindow {
                     fill: parent
                     leftMargin: 4
                 }
-                Repeater {
-                    id: repeater
-                    model: 10
-                    anchors.fill: parent
 
-                    delegate: Item {
-                        id: dUnit
-                        required property int index
-                        objectName: "unit_" + index
-                        width: 310
-                        height: 86
-
-                        BubbleRect {
-                            id: unit
-                            width: 310
-                            height: 86
-                            color: "#3f4449"
-                            border.color: "black"
-                            border.width: 2
-                            rectRadius: 4
-
-                            ScriptButton {
-                                id: selectButton
-                                antialiasing: true
-                                width: 64
-                                height: 64
-                                property bool selected: false
-                                color: selected ? "#660099" : "#50565c"
-                                anchors {
-                                    verticalCenter: parent.verticalCenter
-                                    right: parent.right
-                                    rightMargin: 4
-                                    topMargin: 4
-                                }
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "SELECT"
-                                    font.pixelSize: 12
-                                    font.bold: true
-                                    font.family: "Inter"
-                                    font.weight: Font.Bold
-                                    color: "#C4CCC3"
-                                }
-                                MouseArea {
-                                    id: mArea
-                                    anchors.fill: parent
-                                    onClicked: selectButton.selected = !selectButton.selected
-                                }
-                            }
-
-                            ScriptButton {
-                                id: sourceDialogButton
-                                width: 30
-                                height: 30
-
-                                anchors {
-                                    right: selectButton.left
-                                    top: selectButton.top
-                                    rightMargin: 2
-                                }
-                                Text {
-                                    anchors.centerIn: parent
-                                    text: "S"
-                                    font.pixelSize: 12
-                                    font.bold: true
-                                    font.family: "Inter"
-                                    font.weight: Font.Bold
-                                    color: "#C4CCC3"
-                                }
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: folderDialog.open()
-                                }
-                                FolderDialog {
-                                    id: folderDialog
-
-                                    onAccepted: {
-                                        console.log("Selected folder:", folderPathHelper.toLocalPath(folderDialog.selectedFolder));
-                                    }
-                                }
-                            }
-
-                            BubbleRect {
-                                id: sourceLabel
-                                width: 32
-                                height: 20
-                                color: "#50565c"
-                                border.color: "black"
-                                border.width: 2
-                                rectRadius: 4
-                                clip: true
-                                anchors {
-                                    verticalCenter: sourceDialogButton.verticalCenter
-                                    left: unit.left
-                                    leftMargin: 6
-                                    right: sourceDialogButton.left
-                                    rightMargin: 4
-                                }
-                                Item {
-                                    id: sourceTextViewport
-
-                                    anchors {
-                                        left: parent.left
-                                        leftMargin: 4
-                                        right: parent.right
-                                        rightMargin: 4
-                                        top: parent.top
-                                        bottom: parent.bottom
-                                    }
-
-                                    clip: true
-
-                                    Text {
-                                        id: sourceText
-
-                                        text: folderPathHelper.toLocalPath(folderDialog.selectedFolder)
-                                        font.pixelSize: 10
-                                        font.bold: true
-                                        font.family: "Inter"
-                                        color: "#C4CCC3"
-
-                                        y: (parent.height - height) / 2
-                                        onTextChanged: {
-                                            sourceScrollAnimation.stop();
-                                            x = 0;
-                                        }
-                                    }
-                                }
-                                MouseArea {
-                                    id: sourceLabelMouseArea
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                }
-                                NumberAnimation {
-                                    id: sourceScrollAnimation
-                                    target: sourceText
-                                    property: "x"
-                                    from: 0
-                                    to: -sourceText.width
-                                    duration: 5000
-                                    loops: Animation.Infinite
-
-                                    running: sourceLabelMouseArea.containsMouse && sourceText.width > sourceTextViewport.width
-
-                                    easing.type: Easing.Linear
-                                }
-                            }
-
-                            ScriptButton {
-                                id: destinationDialogButton
-                                width: 30
-                                height: 30
-                                anchors {
-                                    right: selectButton.left
-                                    bottom: selectButton.bottom
-                                    rightMargin: 2
-                                }
-                                Text {
-                                    x: 11
-                                    y: 8
-                                    text: "D"
-                                    font.pixelSize: 12
-                                    font.bold: true
-                                    font.family: "Inter"
-                                    font.weight: Font.Bold
-                                    color: "#C4CCC3"
-                                }
-                                MouseArea {
-                                    anchors.fill: parent
-                                    onClicked: destinationFolderDialog.open()
-                                }
-                                FolderDialog {
-                                    id: destinationFolderDialog
-                                    onAccepted: {
-                                        console.log("Selected folder:", folderPathHelper.toLocalPath(destinationFolderDialog.selectedFolder));
-                                    }
-                                }
-                            }
-
-                            BubbleRect {
-                                id: destinationLabel
-                                width: 32
-                                height: 20
-                                color: "#50565c"
-                                border.color: "black"
-                                border.width: 2
-                                rectRadius: 4
-                                anchors {
-                                    verticalCenter: destinationDialogButton.verticalCenter
-                                    left: unit.left
-                                    leftMargin: 6
-                                    right: destinationDialogButton.left
-                                    rightMargin: 4
-                                }
-                                Item {
-                                    id: destinationTextViewport
-
-                                    anchors {
-                                        left: parent.left
-                                        leftMargin: 4
-                                        right: parent.right
-                                        rightMargin: 4
-                                        top: parent.top
-                                        bottom: parent.bottom
-                                    }
-
-                                    clip: true
-
-                                    Text {
-                                        id: destinationText
-                                        text: folderPathHelper.toLocalPath(destinationFolderDialog.selectedFolder)
-                                        font.pixelSize: 10
-                                        font.bold: true
-                                        font.family: "Inter"
-                                        color: "#C4CCC3"
-
-                                        y: (parent.height - height) / 2
-                                        onTextChanged: {
-                                            destinationScrollAnimation.stop();
-                                            x = 0;
-                                        }
-                                    }
-                                }
-                                MouseArea {
-                                    id: destinationLabelMouseArea
-                                    anchors.fill: parent
-                                    hoverEnabled: true
-                                }
-                                NumberAnimation {
-                                    id: destinationScrollAnimation
-                                    target: destinationText
-                                    property: "x"
-                                    from: 0
-                                    to: -destinationText.width
-                                    duration: 5000
-                                    loops: Animation.Infinite
-
-                                    running: destinationLabelMouseArea.containsMouse && destinationText.width > destinationTextViewport.width
-
-                                    easing.type: Easing.Linear
-                                }
-                            }
-                        }
-                    }
+                Unit {
+                    id: unit0
+                    unitIDCount: 0
+                }
+                Unit {
+                    id: unit1
+                    unitIDCount: 1
+                }
+                Unit {
+                    id: unit2
+                    unitIDCount: 2
+                }
+                Unit {
+                    id: unit3
+                    unitIDCount: 3
+                }
+                Unit {
+                    id: unit4
+                    unitIDCount: 4
+                }
+                Unit {
+                    id: unit5
+                    unitIDCount: 5
+                }
+                Unit {
+                    id: unit6
+                    unitIDCount: 6
+                }
+                Unit {
+                    id: unit7
+                    unitIDCount: 7
+                }
+                Unit {
+                    id: unit8
+                    unitIDCount: 8
+                }
+                Unit {
+                    id: unit9
+                    unitIDCount: 9
                 }
             }
         }
+    }
 
-        // ==================================================
-        DragHandler {
-            target: null
-            onActiveChanged: {
-                if (active) {
-                    window.startSystemMove();
-                }
+    // ==================================================
+    DragHandler {
+        target: null
+        onActiveChanged: {
+            if (active) {
+                window.startSystemMove();
             }
         }
     }

@@ -16,12 +16,18 @@ mklog& mklog::getInstance() {
 
 void mklog::info(const std::string& message) {
     std::lock_guard<std::mutex> lock(mutex);
-    file << "[INFO] " << message << '\n';
+    std::time_t now = std::time(nullptr);
+    std::tm* time = std::localtime(&now);
+    std::strftime(buffer, sizeof(buffer), "%H:%M:%S", time);
+    file << "[INFO]" << "[" << buffer << "] " << message << '\n';
     file.flush();
 }
 
 void mklog::error(const std::string& message) {
     std::lock_guard<std::mutex> lock(mutex);
-    file << "[ERROR] " << message << '\n';
+    std::time_t now = std::time(nullptr);
+    std::tm* time = std::localtime(&now);
+    std::strftime(buffer, sizeof(buffer), "%H:%M:%S", time);
+    file << "[ERROR]" << "[" << buffer << "] " << message << '\n';
     file.flush();
 }

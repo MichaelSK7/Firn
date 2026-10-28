@@ -41,6 +41,8 @@ qt_add_qml_module(Firn
         src/qml/generic/ScriptButton.qml
         src/qml/generic/NewPresetPopup.qml
         src/qml/generic/PresetsList.qml
+        src/qml/generic/Unit.qml
+        src/qml/generic/UnSavedDialog.qml
     RESOURCES
         res/assets/Firn_appIcon.png
 )
@@ -72,6 +74,14 @@ install(TARGETS Firn
 
 target_compile_definitions(Firn PRIVATE
     USERDATA_DIR="${CMAKE_SOURCE_DIR}/userdata"
+)
+
+target_compile_definitions(Firn PRIVATE
+    PRESETS_DIR="${CMAKE_SOURCE_DIR}/userdata/presets/"
+)
+
+target_compile_definitions(Firn PRIVATE
+    PROJECT_DIR="${CMAKE_SOURCE_DIR}"
 )
 
 target_compile_definitions(FirnCpp PUBLIC

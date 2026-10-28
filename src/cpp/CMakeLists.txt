@@ -30,8 +30,18 @@ target_link_libraries(FirnCpp
         VendorCpp
 )
 
-target_compile_definitions(FirnCpp
-    PRIVATE
-        USERDATA_DIR="${CMAKE_SOURCE_DIR}/userdata"
+target_compile_definitions(FirnCpp PRIVATE
+    USERDATA_DIR="${CMAKE_SOURCE_DIR}/userdata"
 )
 
+target_compile_definitions(FirnCpp PRIVATE
+    PRESETS_DIR="${CMAKE_SOURCE_DIR}/userdata/presets/"
+)
+
+target_compile_definitions(FirnCpp PRIVATE
+    PROJECT_DIR="${CMAKE_SOURCE_DIR}"
+)
+
+target_compile_definitions(FirnCpp PUBLIC
+        LOG_DIR="${CMAKE_SOURCE_DIR}/log"
+)

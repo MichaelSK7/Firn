@@ -1,4 +1,5 @@
 #pragma once
+#include <ctime>
 #include <fstream>
 #include <mutex>
 #include <string>
@@ -7,6 +8,8 @@ class mklog {
   private:
     std::ofstream file;
     std::mutex mutex;
+    char buffer[100];
+
     mklog();
     ~mklog() = default;
 
